@@ -4,6 +4,7 @@ define([
 	'backbone',
 	'backboneD3',
 	'd3',
+	'tipsy'
 ], function($, _, Backbone, BackboneD3){
 	var BackboneD3Line = BackboneD3.PlotView.extend({
 		initialize: function(collection, settings) {
@@ -85,8 +86,8 @@ define([
 
 			// Draw axes & label
 			if (this.x_tickSize != 'undefined' && this.x_tickPadding != 'undefined' && this.x_ticks != 'undefined') {
-				//xAxis = d3.svg.axis().scale(x).tickSize(this.y_tickSize).tickPadding(this.x_tickPadding).ticks(this.x_ticks);
-				xAxis = d3.svg.axis().scale(x).tickSize(this.x_tickSize).tickPadding(this.x_tickPadding);
+				xAxis = d3.svg.axis().scale(x).tickSize(this.x_tickSize).tickPadding(this.x_tickPadding).ticks(this.x_ticks);
+				//xAxis = d3.svg.axis().scale(x).tickSize(this.x_tickSize).tickPadding(this.x_tickPadding);
 				
 				//xAxisGroup = chart.select('.xTick');
 				if (!xAxisGroup) {
@@ -96,8 +97,8 @@ define([
 				}
 			}
 			if (this.y_tickSize != 'undefined' && this.y_tickPadding != 'undefined' && this.y_ticks != 'undefined') {
-				//yAxis = d3.svg.axis().scale(y).orient('left').tickSize(this.y_tickSize).tickPadding(this.y_tickPadding).ticks(this.y_ticks);
-				yAxis = d3.svg.axis().scale(y).orient('left').tickSize(this.y_tickSize).tickPadding(this.y_tickPadding);
+				yAxis = d3.svg.axis().scale(y).orient('left').tickSize(this.y_tickSize).tickPadding(this.y_tickPadding).ticks(this.y_ticks);
+				//yAxis = d3.svg.axis().scale(y).orient('left').tickSize(this.y_tickSize).tickPadding(this.y_tickPadding);
 				
 				//yAxisGroup = chart.select('.yTick');
 				if (!yAxisGroup) {
@@ -105,6 +106,18 @@ define([
 				} else { 
 					chart.select('.yTick').call(yAxis) 
 				};
+			}
+
+			// tipsy
+			console.log(this.tipsy);
+			if (this.tipsy) {
+				$('svg circle').tipsy({
+					gravity: 'w',
+					html: true,
+					title: function(){
+						return 'test';
+					}
+				});
 			}
 
 		},

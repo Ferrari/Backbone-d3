@@ -17,7 +17,6 @@ define([
 				this.settings = settings || {};
 				var divname = this.settings.div || "#plot";
 				this.div = d3.select(divname)
-				// time taken in transitions
 				this.duration = this.settings.duration || 500;
 				this.maxDataPointsForDots = this.settings.maxDataPointsForDots || 50;
 				this.transitionDuration = this.settings.transitionDuration || 1000;
@@ -33,6 +32,9 @@ define([
 					}
 				});
 				*/
+
+				// tipsy: tooltip for chart data
+				this.tipsy = this.settings.tipsy || undefined;
 
 				/* Chart display settings */
 				this.w = (typeof(this.settings.w) == 'number') ? this.settings.w : 800;

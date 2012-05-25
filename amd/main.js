@@ -5,6 +5,7 @@ require.config({
 		"underscore": "lib/underscore-amd-min-1.3.2",
 		"backbone": "lib/backbone-amd-min-0.9.2",
 		"d3": "lib/d3-min-2.9.2",
+		"tipsy": "lib/jquery.tipsy",
 		"backboneD3": "amd/backbone-d3",
 		"backboneD3Line": "amd/visualisations/line"
 	}
@@ -48,9 +49,8 @@ require([
 		h: 400,
 		margin: 40,
 		x_domain:[0, x_max], 
-		y_domain:[0, y_max]
-		//x_range:[0, 800],
-		//y_range:[300, 0]
+		y_domain:[0, y_max],
+		tipsy: true
 	});
 	plot1.collection.reset([new DataPoint({x:0, y:0})]);
 
