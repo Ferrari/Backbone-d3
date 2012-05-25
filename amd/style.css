@@ -1,0 +1,15 @@
+#line{
+	height:900px;
+	width: 900px;
+}
+path{
+	stroke: steelblue;
+	stroke-width: 2px;
+	fill: none;
+}
+circle{
+	fill:steelblue;
+}
+.area{
+	fill: lightsteelblue;
+}
