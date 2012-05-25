@@ -3,24 +3,22 @@ Backbone.d3.Canned['Line'] = {
     initialize: function(collection, settings) {
       Backbone.d3.PlotView.prototype.initialize.apply(this, [collection, settings]);
 
-  	  this.w = settings.w || 200;
-      this.h = settings.h || 200;
-      this.size = 20;
+			this.x_domain = (settings.x_domain instanceof Array) ? settings.x_domain : [0, 20];
+			this.x_range = (settings.x_range instanceof Array) ? settings.x_range : [10, 190];
+			this.y_domain = (settings.y_domain instanceof Array) ? settings.y_domain : [-1, 1];
+			this.y_range = (settings.y_range instanceof Array) ? settings.y_range : [10, 190];
     },
     plot: function(options){
-      var w = this.w;
-      var h = this.h;
+			var x_domain = this.x_domain,
+					x_range = this.x_range,
+					y_domain = this.y_domain,
+					y_range = this.y_range;
+
       var data = this.plotdata();
       var interpolation = this.settings.interpolation || "linear";
-      var x = d3.scale.linear()
-        .domain([0, this.size])
-        .range([10, w -10]);
-
-      var y = d3.scale.linear()
-        .domain([-1, 1])
-        .rangeRound([10, h - 10]);
-
-      // Draw axes & label
+			console.log(x_domain + "|" + x_range);
+			var x = d3.scale.linear().domain(x_domain).range(x_range);
+			var y = d3.scale.linear().domain(y_domain).range(y_range);
 
       // line
       var chart = null;

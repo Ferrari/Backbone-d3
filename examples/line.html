@@ -6,7 +6,7 @@
 	  <style>
 	  #line{
 	    height:200px;
-	    width: 200px;
+	    width: 200px; //600px;
 	  }
 	  path{
 	    stroke: steelblue;
@@ -42,6 +42,15 @@
       var series1 = new DataSeries();
 
       var plot1 = new Backbone.d3.Canned.Line.View(series1, {div:'#line'});
+			/*
+			var plot1 = new Backbone.d3.Canned.Line.View(series1, {
+				div:'#line',
+				x_domain:[0,20],
+				x_range:[10, 600],
+				y_domain:[-1, 1],
+				y_range:[10, 200]
+			});
+			*/
       plot1.collection.reset([new DataPoint({x:0, y:0})]);
 
        _.each(_.range(1,20), function(i, ii, l) {

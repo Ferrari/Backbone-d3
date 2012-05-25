@@ -34,21 +34,33 @@ require([
 	});
 
 	var series1 = new DataPoints();
+	/*
+	 * div: target area for Chart
+	 * w, h: Width/Height of Chart graph
+	 * domain: IMPORTANT! max/min value of data collection
+	 */
+	var test = [1, 3, 5, 7, 9, 4, 5, 8, 10, 15, 20, 23];
+	var x_max = test.length;
+	var y_max = _.max(test);
 	var plot1 = new BackboneD3Line(series1, {
 		div:'#line', 
-		x_domain:[0, 12], 
-		x_range:[0, 800],
-		y_domain:[0, 23],
-		y_range:[300, 0]
+		w: 800,
+		h: 400,
+		margin: 40,
+		x_domain:[0, x_max], 
+		y_domain:[0, y_max]
+		//x_range:[0, 800],
+		//y_range:[300, 0]
 	});
 	plot1.collection.reset([new DataPoint({x:0, y:0})]);
 
-	var test = [1, 3, 5, 7, 9, 4, 5, 8, 10, 15, 20, 23];
 	var max = _.max(test);
+	var total = [];
+	var counter = 0;
 	_.each(test, function(i, ii, l) {
 		setTimeout(function() {
 			var tmp = test[ii];
-			var addPoint = new DataPoint({y:tmp, x: ii});
+			var addPoint = new DataPoint({y:tmp, x: ii + 1});
 			plot1.collection.add(addPoint);
 		}, 1 + Math.random() * 1000);
 	});
