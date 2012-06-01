@@ -2,21 +2,21 @@ Backbone.d3.Canned['Line'] = {
   View: Backbone.d3.PlotView.extend({
     initialize: function(collection, settings) {
       Backbone.d3.PlotView.prototype.initialize.apply(this, [collection, settings]);
-
-			this.x_domain = (settings.x_domain instanceof Array) ? settings.x_domain : [0, 20];
-			this.x_range = (settings.x_range instanceof Array) ? settings.x_range : [10, 190];
-			this.y_domain = (settings.y_domain instanceof Array) ? settings.y_domain : [-1, 1];
-			this.y_range = (settings.y_range instanceof Array) ? settings.y_range : [10, 190];
     },
     plot: function(options){
-			var x_domain = this.x_domain,
-					x_range = this.x_range,
+			var w = this.w,
+					h = this.h,
+					x_domain = this.x_domain,
 					y_domain = this.y_domain,
-					y_range = this.y_range;
+					x_range = this.x_range,
+					y_range = this.y_range,
+					margin = this.margin,
+					xAxisGroup = null,
+					yAxisGroup = null;
 
       var data = this.plotdata();
       var interpolation = this.settings.interpolation || "linear";
-			console.log(x_domain + "|" + x_range);
+
 			var x = d3.scale.linear().domain(x_domain).range(x_range);
 			var y = d3.scale.linear().domain(y_domain).range(y_range);
 
@@ -28,7 +28,13 @@ Backbone.d3.Canned['Line'] = {
         .interpolate(interpolation);
 
       if (options.newPlot) {
-        chart = this.div.append("svg:svg");
+        chart = this.div.append("svg:svg")
+												.attr("width", w)
+												.attr("height", h)
+												.attr("class", "viz")
+												.append("svg:g")
+												.attr("transform", "translate("+margin+","+margin+")");
+
         chart.selectAll("circle")
           .data(data).enter().append("svg:circle")
           .attr("cx", function(d, i) { return x(d.x) })
@@ -42,17 +48,20 @@ Backbone.d3.Canned['Line'] = {
         chart.append("svg:path").attr("d", line(_.sortBy(data, function (d) { return d.x;})));
 
       } else {
-        chart = this.div.selectAll("svg");
+        //chart = this.div.selectAll("svg");
+				chart = this.div.select('svg').select('g');
+
         var circles = chart.selectAll("circle").data(data);
 
-        circles.enter().insert("svg:circle", "circle")
-            .attr("cx", function(d, i) { return x(d.x) })
-            .attr("cy", function(d, i) { return y(d.y) })
-            .attr("id", function(d) { return d.x + '-' + d.y })
-            .attr("r", 0)
-          .transition()
-  		      .duration(this.duration)
-  		        .attr("r", this.settings.pointsize || 3);
+        circles.enter()
+							 .insert("svg:circle", "circle")
+							 .attr("cx", function(d, i) { return x(d.x) })
+            	 .attr("cy", function(d, i) { return y(d.y) })
+            	 .attr("id", function(d) { return d.x + '-' + d.y })
+            	 .attr("r", 0)
+							 .transition()
+  		      	 .duration(this.duration)
+  		      	 .attr("r", this.settings.pointsize || 3);
 
         // TODO: transition to grown the line between points
         chart.selectAll("path")
@@ -62,10 +71,45 @@ Backbone.d3.Canned['Line'] = {
           .attr("d", line);
 
       }
-      // TODO: label points
-      // TODO: different shapes
-      // TODO: support multiple datasets in one plot
 
+			// Draw axes & label
+			if (this.x_tickSize != undefined && this.x_tickPadding != undefined && this.x_ticks != undefined) {
+				xAxis = d3.svg.axis().scale(x).tickSize(this.x_tickSize).tickPadding(this.x_tickPadding).ticks(this.x_ticks);
+
+				xAxisGroup = chart.select('.xTick');
+				if (xAxisGroup[0] == '' || xAxisGroup[0] == null){
+					xAxisGroup = chart.append('svg:g').attr('class', 'xTick').call(xAxis); 
+				} else { 
+					chart.select('.xTick').call(xAxis);
+				}
+			}
+			if (this.y_tickSize != undefined && this.y_tickPadding != undefined && this.y_ticks != undefined) {
+				yAxis = d3.svg.axis().scale(y).orient('left').tickSize(this.y_tickSize).tickPadding(this.y_tickPadding).ticks(this.y_ticks);
+
+				yAxisGroup = chart.select('.yTick');
+				if (yAxisGroup[0] == '' || yAxisGroup[0] == null){
+					yAxisGroup = chart.append('svg:g').attr('class', 'yTick').call(yAxis); 
+				} else { 
+					chart.select('.yTick').call(yAxis) 
+				};
+			}
+
+			// tipsy
+			if (this.tooltip) {
+				$('svg circle').tipsy({
+					gravity: 'w',
+					html: true,
+					title: function(){
+						var item = this.getAttribute('id').match(/(\d+)-(.*)/);
+						if ((item instanceof Array) && item.length == 3) {
+							return 'x: ' + item[1] + '; y: ' + item[2];
+						} else {
+							console.log("Can't get item detail");
+							return "Can't get item detail";
+						}
+					}
+				});
+			}
     },
     plotdata: function(){
       var data = [];

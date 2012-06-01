@@ -34,7 +34,7 @@ define([
 				*/
 
 				// tipsy: tooltip for chart data
-				this.tipsy = this.settings.tipsy || undefined;
+				this.tooltip= this.settings.tooltip || undefined;
 
 				/* Chart display settings */
 				this.w = (typeof(this.settings.w) == 'number') ? this.settings.w : 800;

@@ -82,6 +82,16 @@ Backbone.d3.Canned['Pie'] = {
           .attr("d", this.arc)
         .style("fill",
           function(d, i) { return that.colorScale(i); });
+
+			if (this.tooltip) {
+				var params = {
+					pieData: pieData,
+					r: this.r,
+					arc: this.arc
+				}
+				this.showTip(params);
+			}
+
       return pieData;
     },
     updatePie: function(options) {
@@ -106,6 +116,16 @@ Backbone.d3.Canned['Pie'] = {
             return that.arc(i(t));
           };
         });
+
+			if (this.tooltip) {
+				var params = {
+					pieData: newPieData,
+					r: this.r,
+					arc: this.arc
+				}
+				this.showTip(params);
+			}
+
       return newPieData;
     },
     plot: function(options) {
@@ -118,6 +138,21 @@ Backbone.d3.Canned['Pie'] = {
       } else {
         this.pieData = this.updatePie({data: data});
       }
-    }
+    },
+		showTip: function(options) {
+			var that = this;
+			var target = that.div.select("g");
+			target.selectAll("text").remove();
+			target.selectAll("text")
+				.data(options.pieData)
+				.enter().append("svg:text")
+				.attr("transform", function(d) {
+					d.innerRadius = 0;
+					d.outerRadius = options.r;
+					return "translate("+options.arc.centroid(d)+")";
+				})
+				.attr("text-anchor", "middle")
+				.text(function(d, i) { return d.data });
+		}
   })
 }

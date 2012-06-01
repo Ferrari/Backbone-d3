@@ -85,23 +85,21 @@ define([
 			}
 
 			// Draw axes & label
-			if (this.x_tickSize != 'undefined' && this.x_tickPadding != 'undefined' && this.x_ticks != 'undefined') {
+			if (this.x_tickSize != undefined && this.x_tickPadding != undefined && this.x_ticks != undefined) {
 				xAxis = d3.svg.axis().scale(x).tickSize(this.x_tickSize).tickPadding(this.x_tickPadding).ticks(this.x_ticks);
-				//xAxis = d3.svg.axis().scale(x).tickSize(this.x_tickSize).tickPadding(this.x_tickPadding);
 				
-				//xAxisGroup = chart.select('.xTick');
-				if (!xAxisGroup) {
+				xAxisGroup = chart.select('.xTick');
+				if (xAxisGroup[0] == '' || xAxisGroup[0] == null){
 					xAxisGroup = chart.append('svg:g').attr('class', 'xTick').call(xAxis); 
 				} else { 
 					chart.select('.xTick').call(xAxis);
 				}
 			}
-			if (this.y_tickSize != 'undefined' && this.y_tickPadding != 'undefined' && this.y_ticks != 'undefined') {
+			if (this.y_tickSize != undefined && this.y_tickPadding != undefined && this.y_ticks != undefined) {
 				yAxis = d3.svg.axis().scale(y).orient('left').tickSize(this.y_tickSize).tickPadding(this.y_tickPadding).ticks(this.y_ticks);
-				//yAxis = d3.svg.axis().scale(y).orient('left').tickSize(this.y_tickSize).tickPadding(this.y_tickPadding);
 				
-				//yAxisGroup = chart.select('.yTick');
-				if (!yAxisGroup) {
+				yAxisGroup = chart.select('.yTick');
+				if (yAxisGroup[0] == '' || yAxisGroup[0] == null){
 					yAxisGroup = chart.append('svg:g').attr('class', 'yTick').call(yAxis); 
 				} else { 
 					chart.select('.yTick').call(yAxis) 
@@ -109,13 +107,18 @@ define([
 			}
 
 			// tipsy
-			console.log(this.tipsy);
-			if (this.tipsy) {
+			if (this.tooltip) {
 				$('svg circle').tipsy({
 					gravity: 'w',
 					html: true,
 					title: function(){
-						return 'test';
+						var item = this.getAttribute('id').match(/(\d+)-(.*)/);
+						if ((item instanceof Array) && item.length == 3) {
+							return 'x:' + item[1] + '; y:' + item[2];
+						} else {
+							console.log("Can't get item detail");
+							return "Can't get item detail";
+						}
 					}
 				});
 			}

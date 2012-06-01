@@ -16,8 +16,31 @@
         this.duration = this.settings.duration || 500;
         this.collection.fetch();
 
-        // TODO: make the chart a member var of the View
-        // for easier access/fine grained control
+				// tipsy: tooltip for chart data
+				this.tooltip = this.settings.tooltip || undefined;
+
+				/* Chart display settings */
+				this.w = (typeof(this.settings.w) == 'number') ? this.settings.w : 800;
+				this.h = (typeof(this.settings.h) == 'number') ? this.settings.h : 600;
+				this.margin = (typeof(this.settings.margin) == 'number') ? this.settings.margin : 0;
+
+				// Chart size control
+				this.x_domain = (this.settings.x_domain instanceof Array) ? this.settings.x_domain : [0, 1];
+				this.y_domain = (this.settings.y_domain instanceof Array) ? this.settings.y_domain : [0, 1];
+				this.x_range = (this.settings.x_range instanceof Array) ? this.settings.x_range : [0, this.w - this.margin * 2];
+				this.y_range = (this.settings.y_range instanceof Array) ? this.settings.y_range : [this.h - this.margin * 2, 0];
+
+				// Chart x-axis & y-axis info
+				this.x_tickSize = (typeof(this.settings.x_tickSize) == 'number') ? this.settings.x_tickSize : (this.h - this.margin * 2);
+				this.y_tickSize = (typeof(this.settings.y_tickSize) == 'number') ? this.settings.y_tickSize : (-this.w + this.margin * 2);
+
+				this.x_tickPadding = (typeof(this.settings.x_tickPadding) == 'number') ? this.settings.x_tickPadding : 5;
+				this.y_tickPadding = (typeof(this.settings.y_tickPadding) == 'number') ? this.settings.y_tickPadding : 5;
+
+				this.x_ticks = (typeof(this.settings.x_ticks) == 'number') ? this.settings.x_ticks : 1;
+				this.y_ticks = (typeof(this.settings.y_ticks) == 'number') ? this.settings.y_ticks : 1;
+
+				console.log(this.settings);
       },
       plotdata: function() {
         var data = [];

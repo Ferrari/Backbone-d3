@@ -48,7 +48,8 @@
         var dynamicPlot = new Backbone.d3.Canned.Pie.View(dynamicSeries, {
           div:'#plot2',
           name: 'PLOT2',
-          radius: 85
+					radius: 85,
+					tooltip: true
         });
         dynamicSeries.reset([new DataPoint({id: 1, value: 1}),
           new DataPoint({id: 2, value: 2})]);

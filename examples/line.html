@@ -2,11 +2,8 @@
 	<head>
 	  <title>Backbone.d3 - Line charts</title>
 
-	  <link rel="stylesheet" href="style.css" type="text/css" />
 	  <style>
 	  #line{
-	    height:200px;
-	    width: 200px; //600px;
 	  }
 	  path{
 	    stroke: steelblue;
@@ -17,8 +14,10 @@
 	    fill:steelblue;
 	  }
 	  </style>
+		<link href="../lib/tipsy.css" rel="stylesheet">
 	  <script src="loader.js" type="text/javascript"></script>
     <script src="../visualisations/line.js" type="text/javascript"></script>
+		<script src="../lib/jquery.tipsy.js" type="text/javascript"></script>
     <script type="text/javascript">
     $(function (){
       var DataPoint = Backbone.Model.extend({
@@ -34,23 +33,22 @@
         model : DataPoint,
         url : "bardata.json",
         fetch: function(){
-          // No op
           console.log('fetching is a no op in this example');
         }
       });
 
       var series1 = new DataSeries();
 
-      var plot1 = new Backbone.d3.Canned.Line.View(series1, {div:'#line'});
-			/*
+      //var plot1 = new Backbone.d3.Canned.Line.View(series1, {div:'#line'});
 			var plot1 = new Backbone.d3.Canned.Line.View(series1, {
 				div:'#line',
+				w: 500,
+				h: 300,
+				margin: 30,
 				x_domain:[0,20],
-				x_range:[10, 600],
 				y_domain:[-1, 1],
-				y_range:[10, 200]
+				tooltip: true
 			});
-			*/
       plot1.collection.reset([new DataPoint({x:0, y:0})]);
 
        _.each(_.range(1,20), function(i, ii, l) {
@@ -73,7 +71,9 @@
       <div class="chartcontainer">
         <div id="line"></div>
       </div>
+			<!--
 	    <div id="footer"></div>
+			-->
     </div>
   </body>
 </html>
