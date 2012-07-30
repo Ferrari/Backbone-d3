@@ -56,6 +56,8 @@ define([
 
 				this.x_ticks = (typeof(this.settings.x_ticks) == 'number') ? this.settings.x_ticks : 1;
 				this.y_ticks = (typeof(this.settings.y_ticks) == 'number') ? this.settings.y_ticks : 1;
+        this.x_label = (this.settings.x_label !== undefined) ? this.settings.x_label : true;
+        this.y_label = (this.settings.y_label !== undefined) ? this.settings.y_label : true;
 
 				console.log(this.settings);
 			},

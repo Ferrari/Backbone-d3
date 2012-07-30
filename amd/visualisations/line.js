@@ -41,6 +41,8 @@ define([
 			.y(function(d,i) { return y(d.y) })
 			.interpolate(interpolation);
 
+      // Start draw the chart graph, 
+      // SVG layer is decide by the order of elements
 			if (options.newPlot) {
 				chart = this.div.append("svg:svg")
 												.attr("width", w)
@@ -48,6 +50,8 @@ define([
 												.attr("class", "viz")
 												.append("svg:g")
 												.attr("transform", "translate("+margin+","+margin+")");
+
+				chart.append("svg:path").attr("d", line(_.sortBy(data, function (d) { return d.x;})));
 
 				chart.selectAll("circle")
 				.data(data).enter().append("svg:circle")
@@ -58,8 +62,6 @@ define([
 				.transition()
 				.duration(this.duration)
 				.attr("r", this.settings.pointsize || 3);
-
-				chart.append("svg:path").attr("d", line(_.sortBy(data, function (d) { return d.x;})));
 
 			} else {
 				//chart = this.div.selectAll("svg");
@@ -85,7 +87,7 @@ define([
 			}
 
 			// Draw axes & label
-			if (this.x_tickSize != undefined && this.x_tickPadding != undefined && this.x_ticks != undefined) {
+			if (this.x_tickSize != undefined && this.x_tickPadding != undefined && this.x_ticks != undefined && this.x_label !== false) {
 				xAxis = d3.svg.axis().scale(x).tickSize(this.x_tickSize).tickPadding(this.x_tickPadding).ticks(this.x_ticks);
 				
 				xAxisGroup = chart.select('.xTick');
@@ -95,7 +97,7 @@ define([
 					chart.select('.xTick').call(xAxis);
 				}
 			}
-			if (this.y_tickSize != undefined && this.y_tickPadding != undefined && this.y_ticks != undefined) {
+			if (this.y_tickSize != undefined && this.y_tickPadding != undefined && this.y_ticks != undefined && this.y_label !== false) {
 				yAxis = d3.svg.axis().scale(y).orient('left').tickSize(this.y_tickSize).tickPadding(this.y_tickPadding).ticks(this.y_ticks);
 				
 				yAxisGroup = chart.select('.yTick');
