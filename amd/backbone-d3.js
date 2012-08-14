@@ -33,9 +33,6 @@ define([
 				});
 				*/
 
-				// tipsy: tooltip for chart data
-				this.tooltip= this.settings.tooltip || undefined;
-
 				/* Chart display settings */
 				this.w = (typeof(this.settings.w) == 'number') ? this.settings.w : 800;
 				this.h = (typeof(this.settings.h) == 'number') ? this.settings.h : 600;
@@ -58,6 +55,8 @@ define([
 				this.y_ticks = (typeof(this.settings.y_ticks) == 'number') ? this.settings.y_ticks : 1;
         this.x_label = (this.settings.x_label !== undefined) ? this.settings.x_label : true;
         this.y_label = (this.settings.y_label !== undefined) ? this.settings.y_label : true;
+        this.x_type = (this.settings.x_type !== undefined) ? this.settings.x_type : 'num';
+        this.y_type = (this.settings.y_type !== undefined) ? this.settings.y_type : 'num';
 
 				console.log(this.settings);
 			},
