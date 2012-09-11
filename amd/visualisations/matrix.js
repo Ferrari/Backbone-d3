@@ -6,107 +6,135 @@ define([
   'd3'
 ], function($, _, Backbone, BackboneD3){
   var View = BackboneD3.PlotView.extend({
+    time: d3.time.format("%X"),
     day: d3.time.format("%w"),
     week: d3.time.format("%U"),
     percent: d3.format(".1%"),
-    format: d3.time.format("%Y-%m-%d"),
-    m: [19, 20, 20, 19], // top right bottom left margin
-    gw: 700, // width
-    gh: 136, // height
-    z: 10, // cell size
+    format: d3.time.format("%H:%M"),
+    m: [19, 20, 20, 19],              // top right bottom left margin
+    gw: 700,                          // width
+    gh: 500,                          // height
+    z: 20,                            // cell size
+    zx: 20,                           // cell x-size
+    zy: 20,                           // cell y-size
+    interval: 5,                      // time interval of each slot
+    cellColor: "#D73027",
+    title: "",
     plot: function(options) {
-      var that = this;
-      var w = 700 - this.m[1] - this.m[3], // width
-          h = 136 - this.m[0] - this.m[2];
-      var color = d3.scale.quantize()
-          .domain([0, 1])
-          .range(d3.range(9));
+      var that = this,
+          w = this.gw - this.m[1] - this.m[3],
+          h = this.gh - this.m[0] - this.m[2];
 
+      var color = d3.scale
+                    .quantize()
+                    .domain([0, 1])
+                    .range(d3.range(9));
+
+      var today = new Date(),
+          tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000),
+          today_date = today.getFullYear().toString() 
+                     + (today.getMonth() + 1).toString() 
+                     + today.getDate().toString(),
+          tomorrow_date = tomorrow.getFullYear().toString() 
+                        + (tomorrow.getMonth() + 1).toString() 
+                        + tomorrow.getDate().toString();
+
+      // Initial SVG
       var svg = this.div.selectAll("svg")
-          .data(d3.range(1985, 2011))
-        .enter().append("svg:svg")
-          .attr("width", w + this.m[1] + this.m[3])
-          .attr("height", h + this.m[0] + this.m[2])
-          .attr("class", "RdYlGn") // Colour pallet.
-        .append("svg:g")
-          .attr("transform",
-            "translate(" + (this.m[3] + (w - this.z * 53) / 2) + "," + (this.m[0] + (h - this.z * 7) / 2) + ")");
+                        .data(d3.range(today_date, tomorrow_date))
+                        .enter().append("svg:svg")
+                        .attr("width", w + this.m[1] + this.m[3])
+                        .attr("height", h + this.m[0] + this.m[2])
+                        .attr("class", "RdYlGn") // Colour pallet.
+                        .append("svg:g")
+                        .attr("transform",
+                              "translate(" + (this.m[3] + (w - this.zx * (60/this.interval)) / 2) + "," + (this.m[0] + (h - this.zy * 24) / 2) + ")");
 
-      svg.append("svg:text")
-          .attr("transform", "translate(-6," + this.z * 3.5 + ")rotate(-90)")
-          .attr("text-anchor", "middle")
-          .text(String);
+      // Set title if user assign attribute 'title'
+      if (this.title) {
+        svg.append("svg:text")
+           .attr("transform", "translate(-6," + this.zx * 3.5 + ")rotate(-90)")
+           .attr("text-anchor", "middle")
+           .text(String);
+      }
 
       var rect = svg.selectAll("rect.day")
-          .data(function(d) { return d3.time.days(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
-        .enter().append("svg:rect")
-          .attr("class", "day")
-          .attr("width", this.z)
-          .attr("height", this.z)
-          .attr("x", function(d) { return that.week(d) * that.z; })
-          .attr("y", function(d) { return that.day(d) * that.z; });
+                    .data(function(d) { return d3.time.minutes(today, tomorrow, that.interval); })
+                    .enter().append("svg:rect")
+                    .attr("class", "day")
+                    .attr("width", this.zx)
+                    .attr("height", this.zy)
+                    .attr("x", function(d) { 
+                      return (((new Date(d).getMinutes()/that.interval) + 1) * that.zx);
+                      //return that.week(d) * that.z; 
+                    })
+                    .attr("y", function(d) { 
+                      return (new Date(d).getHours() * that.zy);
+                      //return that.day(d) * that.z; 
+                    });
 
+                    /*
       svg.selectAll("path.month")
-          .data(function(d) { return d3.time.months(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
-        .enter().append("svg:path")
-          .attr("class", "month")
-          .attr("d", that.monthPath);
+         .data(function(d) { return d3.time.months(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
+         .enter().append("svg:path")
+         .attr("class", "month")
+         .attr("d", that.monthPath);
+         */
 
       var data = d3.nest()
-            .key(function(d) { return d.date; })
-            .rollup(function(d) { return d[0].count; })
-            .map(this.plotdata());
+                   .key(function(d) { return d.slot; })
+                   .rollup(function(d) { return d[0].display; })
+                   .map(this.plotdata());
 
       rect.attr("class", function(d) {
         return "day q" + color(data[that.format(d)]) + "-9";
       })
+      .attr("style", function(d) {
+        return (data[that.format(d)]) ? "fill:" + that.cellColor : '';
+      })
       .append("svg:title")
       .text(function(d) {
-        return (d = that.format(d)) + (d in data ? ": " + that.percent(data[d]) : "");
+        return (d = that.format(d)) + (d in data ? ": " + data[d] : "");
       });
     },
     plotdata: function(){
-      // return percent safety
       var data = [];
-      var max = this.collection.max(function(d){return d.get("count");}).get("count");
       this.collection.forEach(function(datapoint) {
-          data.push({date:datapoint.get('date'), count:1 - parseFloat(datapoint.get('count'))/max});
-        }
-      )
+        data.push({slot:datapoint.get('slot'), display:datapoint.get('display')});
+      });
       return data;
-    },
+    }
+    /*
     monthPath: function(t0) {
       var t1 = new Date(t0.getUTCFullYear(), t0.getUTCMonth() + 1, 0),
-          d0 = +this.day(t0), w0 = +this.week(t0),
-          d1 = +this.day(t1), w1 = +this.week(t1);
+      d0 = +this.day(t0), w0 = +this.week(t0),
+      d1 = +this.day(t1), w1 = +this.week(t1);
       return "M" + (w0 + 1) * this.z + "," + d0 * this.z
-          + "H" + w0 * this.z + "V" + 7 * this.z
-          + "H" + w1 * this.z + "V" + (d1 + 1) * this.z
-          + "H" + (w1 + 1) * this.z + "V" + 0
-          + "H" + (w0 + 1) * this.z + "Z";
+      + "H" + w0 * this.z + "V" + 7 * this.z
+      + "H" + w1 * this.z + "V" + (d1 + 1) * this.z
+      + "H" + (w1 + 1) * this.z + "V" + 0
+      + "H" + (w0 + 1) * this.z + "Z";
     }
+    */
   });
 
   var Model = Backbone.Model.extend({
     initialize: function(data) {
       this.set({
-        date: data.date,
-        count: data.count
+        slot: data.slot,
+        count: data.count,
+        display: data.display
       });
     }
   });
 
   var Collection = BackboneD3.PlotCollection.extend({
-    model : this.Model,
-    url : "calendar.json",
-    // TODO: add a start date/end date
+    model : Model,
 		success: function( result, foo ) {
-      console.log("!!!");
       var models = [];
       _.each( result, function( row ) {
        models.push( new Model(row.value) );
       });
-      console.log(models);
       if ( models.length == 0 ) { models = null }
       return models;
     },
