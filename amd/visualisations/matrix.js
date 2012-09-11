@@ -15,11 +15,14 @@ define([
     gw: 700,                          // width
     gh: 500,                          // height
     z: 20,                            // cell size
-    zx: 20,                           // cell x-size
-    zy: 20,                           // cell y-size
+    cellX: 10,                           // cell x-size
+    cellY: 20,                           // cell y-size
     interval: 5,                      // time interval of each slot
     cellColor: "#D73027",
     title: "",
+    initialize: function(collection, settings) {
+      BackboneD3.PlotView.prototype.initialize.apply(this, [collection, settings]);
+    },
     plot: function(options) {
       var that = this,
           w = this.gw - this.m[1] - this.m[3],
@@ -48,12 +51,12 @@ define([
                         .attr("class", "RdYlGn") // Colour pallet.
                         .append("svg:g")
                         .attr("transform",
-                              "translate(" + (this.m[3] + (w - this.zx * (60/this.interval)) / 2) + "," + (this.m[0] + (h - this.zy * 24) / 2) + ")");
+                              "translate(" + (this.m[3] + (w - this.cellX * (60/this.interval)) / 2) + "," + (this.m[0] + (h - this.cellY * 24) / 2) + ")");
 
       // Set title if user assign attribute 'title'
       if (this.title) {
         svg.append("svg:text")
-           .attr("transform", "translate(-6," + this.zx * 3.5 + ")rotate(-90)")
+           .attr("transform", "translate(-6," + this.cellX * 3.5 + ")rotate(-90)")
            .attr("text-anchor", "middle")
            .text(String);
       }
@@ -62,14 +65,14 @@ define([
                     .data(function(d) { return d3.time.minutes(today, tomorrow, that.interval); })
                     .enter().append("svg:rect")
                     .attr("class", "day")
-                    .attr("width", this.zx)
-                    .attr("height", this.zy)
+                    .attr("width", this.cellX)
+                    .attr("height", this.cellY)
                     .attr("x", function(d) { 
-                      return (((new Date(d).getMinutes()/that.interval) + 1) * that.zx);
+                      return (((new Date(d).getMinutes()/that.interval) + 1) * that.cellX);
                       //return that.week(d) * that.z; 
                     })
                     .attr("y", function(d) { 
-                      return (new Date(d).getHours() * that.zy);
+                      return (new Date(d).getHours() * that.cellY);
                       //return that.day(d) * that.z; 
                     });
 

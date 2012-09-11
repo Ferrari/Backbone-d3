@@ -20,6 +20,7 @@ define([
 				this.duration = this.settings.duration || 500;
 				this.maxDataPointsForDots = this.settings.maxDataPointsForDots || 50;
 				this.transitionDuration = this.settings.transitionDuration || 1000;
+
 				/*
 				this.collection.fetch({
 					success: function(points, resp){
@@ -57,6 +58,11 @@ define([
         this.y_label = (this.settings.y_label !== undefined) ? this.settings.y_label : true;
         this.x_type = (this.settings.x_type !== undefined) ? this.settings.x_type : 'num';
         this.y_type = (this.settings.y_type !== undefined) ? this.settings.y_type : 'num';
+        // matrix view
+        this.cellColor = this.settings.cellColor || '#D73027';
+        this.interval = this.settings.interval || 5;
+        this.cellX = this.settings.cellX || 10;
+        this.cellY = this.settings.cellY || 10;
 
 				console.log(this.settings);
 			},
