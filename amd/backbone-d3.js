@@ -60,9 +60,11 @@ define([
         this.y_type = (this.settings.y_type !== undefined) ? this.settings.y_type : 'num';
         // matrix view
         this.cellColor = this.settings.cellColor || '#D73027';
-        this.interval = this.settings.interval || 5;
+        this.interval = this.settings.interval || 20;
         this.cellX = this.settings.cellX || 10;
         this.cellY = this.settings.cellY || 10;
+        this.gw = this.settings.gw || 900;
+        this.gh = this.settings.gh || 500;
 
 				console.log(this.settings);
 			},

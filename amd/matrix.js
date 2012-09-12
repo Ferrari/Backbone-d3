@@ -20,14 +20,16 @@ require([
   var matrix = new backboneD3Matrix.view(series1, {
     div: '#matrix',
     cellColor: '#D73027',
-    interval: 1,
-    cellX: 10,
-    cellY: 20
+    interval: 20,
+    cellX: 5,
+    cellY: 20,
+    gw: 1000,
+    gh: 500
   });
   series1.add([
     {slot: '03:45:20', display:'test1'},
     {slot: '11:30:40', display:'111'},
-    {slot: '17:40:30', display:'rfrf'},
-    {slot: '23:00:10', display:'test2'},
+    {slot: '17:40:00', display:'rfrf'},
+    {slot: '23:00:20', display:'test2'},
   ]);
 });

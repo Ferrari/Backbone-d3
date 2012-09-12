@@ -10,16 +10,16 @@ define([
     day: d3.time.format("%w"),
     week: d3.time.format("%U"),
     percent: d3.format(".1%"),
-    format: d3.time.format("%H:%M"),
+    format: d3.time.format("%H:%M:%S"),
     m: [19, 20, 20, 19],              // top right bottom left margin
-    gw: 700,                          // width
+    gw: 900,                          // width
     gh: 500,                          // height
     z: 20,                            // cell size
-    cellX: 10,                           // cell x-size
-    cellY: 20,                           // cell y-size
+    cellX: 10,                        // cell x-size
+    cellY: 20,                        // cell y-size
     interval: 5,                      // time interval of each slot
-    cellColor: "#D73027",
-    title: "",
+    cellColor: "#D73027",             // cell background color
+    title: "",                        // chart title
     initialize: function(collection, settings) {
       BackboneD3.PlotView.prototype.initialize.apply(this, [collection, settings]);
     },
@@ -48,10 +48,10 @@ define([
                         .enter().append("svg:svg")
                         .attr("width", w + this.m[1] + this.m[3])
                         .attr("height", h + this.m[0] + this.m[2])
-                        .attr("class", "RdYlGn") // Colour pallet.
+                        .attr("class", "RdYlGn") 
                         .append("svg:g")
                         .attr("transform",
-                              "translate(" + (this.m[3] + (w - this.cellX * (60/this.interval)) / 2) + "," + (this.m[0] + (h - this.cellY * 24) / 2) + ")");
+                              "translate(" + (this.m[3] + (w - this.cellX * (3600/this.interval)) / 2) + "," + (this.m[0] + (h - this.cellY * 24) / 2) + ")");
 
       // Set title if user assign attribute 'title'
       if (this.title) {
@@ -62,13 +62,19 @@ define([
       }
 
       var rect = svg.selectAll("rect.day")
-                    .data(function(d) { return d3.time.minutes(today, tomorrow, that.interval); })
+                    //.data(function(d) { return d3.time.minutes(today, tomorrow, that.interval); })
+                    .data(function(d) { 
+                      console.log(d3.time.seconds(today, tomorrow, that.interval)); 
+                      return d3.time.seconds(today, tomorrow, that.interval); 
+                    })
                     .enter().append("svg:rect")
                     .attr("class", "day")
                     .attr("width", this.cellX)
                     .attr("height", this.cellY)
                     .attr("x", function(d) { 
-                      return (((new Date(d).getMinutes()/that.interval) + 1) * that.cellX);
+                      //return (((new Date(d).getMinutes()/that.interval) + 1) * that.cellX);
+                      var current = new Date(d);
+                      return ((((current.getMinutes()*60 + current.getSeconds())/that.interval) + 1) * that.cellX);
                       //return that.week(d) * that.z; 
                     })
                     .attr("y", function(d) { 
